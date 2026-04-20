@@ -1,8 +1,8 @@
 CC = gcc
-CFLAGS = -Wall -std=c99 -I.
+CFLAGS = -Wall -std=c99 -I./src
 LIBS = -lnfc
 
-SOURCES = main.c nfc.c
+SOURCES = src/main.c src/nfc.c
 OBJECTS = $(SOURCES:.c=.o)
 TARGET = synquid
 
@@ -15,7 +15,7 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o $(TARGET)
+	rm -f src/*.o $(TARGET)
 
 run: $(TARGET)
 	./$(TARGET)

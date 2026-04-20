@@ -4,22 +4,21 @@
 #include <string.h>
 #include <unistd.h>
 
-static nfc_context *global_context = NULL;
-
 nfc_device* nfc_init_device() {
+    nfc_context *context = NULL;
     nfc_device *device = NULL;
     
-    nfc_init(&global_context);
-    if (!global_context) {
+    nfc_init(&context);
+    if (!context) {
         printf("Error al inicializar\n");
         return NULL;
     }
     printf("libnfc OK\n");
     
-    device = nfc_open(global_context, NULL);
+    device = nfc_open(context, NULL);
     if (!device) {
         printf("Error al abrir dispositivo\n");
-        nfc_exit(global_context);
+        nfc_exit(context);
         return NULL;
     }
     printf("Dispositivo OK: %s\n", nfc_device_get_name(device));
@@ -27,30 +26,32 @@ nfc_device* nfc_init_device() {
     if (nfc_initiator_init(device) < 0) {
         printf("Error al iniciar lector\n");
         nfc_close(device);
-        nfc_exit(global_context);
+        nfc_exit(context);
         return NULL;
     }
-    printf("Lector OK\nAcerca una tarjeta...\n");
+    printf("Lector OK\n");
     
     return device;
 }
 
+// Esta es la función que lee un UID
 char* nfc_read_uid(nfc_device *device) {
     nfc_target target;
+    memset(&target, 0, sizeof(nfc_target));
     const nfc_modulation mod = {
         .nmt = NMT_ISO14443A,
         .nbr = NBR_106,
     };
     
-    printf("Esperando tarjeta...\n");
-    
+    printf("Acerca Tarjeta...\n");
     int r = nfc_initiator_select_passive_target(device, mod, NULL, 0, &target);
     
     if (r <= 0) {
         return NULL;
     }
     
-    char *uid = (char*)malloc(32);
+    char *uid = (char*)malloc(32);  
+    memset(uid,0,32);
     int offset = 0;
     
     for (int i = 0; i < target.nti.nai.szUidLen; i++) {
@@ -60,10 +61,9 @@ char* nfc_read_uid(nfc_device *device) {
     printf("Tarjeta leída!\n");
     printf("UID: %s\n", uid);
     
-    return uid;
+    return uid; 
 }
 
 void nfc_cleanup(nfc_context *ctx, nfc_device *dev) {
     if (dev) nfc_close(dev);
-    if (global_context) nfc_exit(global_context);
 }

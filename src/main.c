@@ -4,7 +4,6 @@
 #include "nfc.h"
 
 int main() {
-    // Inicializar el lector
     nfc_device *device = nfc_init_device();
     
     if (!device) {
@@ -12,20 +11,18 @@ int main() {
         return 1;
     }
     
-    // Leer 3 tarjetas para probar
-    for (int i = 0; i < 3; i++) {
+    while (true) {
         char *uid = nfc_read_uid(device);
         
         if (uid) {
             printf("Tarjeta %d: %s\n", i + 1, uid);
-            free(uid);  // IMPORTANTE: liberar la memoria
+            free(uid);
         }
         
         printf("Esperando...\n");
-        usleep(500000);  // Espera 500ms
+        sleep(1);  
     }
     
-    // Limpiar cuando terminas
     nfc_cleanup(NULL, device);
     
     printf("Listo!\n");
