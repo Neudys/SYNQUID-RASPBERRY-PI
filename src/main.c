@@ -21,7 +21,7 @@ int main() {
         
         if (uid) {
             printf("Tarjeta: %s\n", uid);
-            api_send_attendance(uid, "MOD-001");
+            api_send_attendance(uid, "b8bb5795-c1dd-4fd1-bc15-893cd95f8213");
             free(uid);
         }
         
