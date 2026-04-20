@@ -4,6 +4,8 @@
 #include "nfc.h"
 
 int main() {
+
+    const char *api_url = "https://dentinal-uncompounded-erma.ngrok-free.dev/";
     nfc_device *device = nfc_init_device();
     
     if (!device) {
@@ -16,6 +18,7 @@ int main() {
         
         if (uid) {
             printf("Tarjeta %d: %s\n", uid);
+            api_send_attendance(uid, "MOD-001");
             free(uid);
         }
         
