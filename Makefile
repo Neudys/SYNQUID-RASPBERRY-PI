@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -std=c99 -I./src
-LIBS = -lnfc
+LIBS = -lnfc -lcurl -lcjson
 
-SOURCES = src/main.c src/nfc.c
+SOURCES = src/main.c src/nfc.c src/api.c
 OBJECTS = $(SOURCES:.c=.o)
 TARGET = synquid
 

@@ -58,6 +58,8 @@ char* nfc_read_uid(nfc_device *device) {
         offset += sprintf(uid + offset, "%02X", target.nti.nai.abtUid[i]);
     }
     
+    sprintf(uid + offset, "-0000-0000-0000-0000000000000");
+    
     printf("Tarjeta leída!\n");
     printf("UID: %s\n", uid);
     

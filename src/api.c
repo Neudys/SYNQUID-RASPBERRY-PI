@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include "api.h"
 #include <curl/curl.h>
 #include <cjson/cJSON.h>
@@ -91,10 +92,12 @@ int api_send_attendance(const char *uuid, const char *module_uid) {
     int success = (res == CURLE_OK) ? 1 : 0;
     
     if (success) {
-        printf("✓ Attendance registrado\n");
+        printf("Attendance registrado\n");
+        printf("Respuesta: %.500s\n", response.contenido);
     } else {
-        printf("✗ Error: %s\n", curl_easy_strerror(res));
+        printf("Error: %s\n", curl_easy_strerror(res));
     }
+    
     
     // Cleanup
     curl_slist_free_all(headers);
