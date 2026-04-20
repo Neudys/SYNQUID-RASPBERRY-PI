@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -std=c99 -I./src
-LIBS = -lnfc -lcurl -lcjson
+LIBS = -lnfc -lcurl -lcjson -lssl -lcrypto
 
 SOURCES = src/main.c src/nfc.c src/api.c
 OBJECTS = $(SOURCES:.c=.o)
