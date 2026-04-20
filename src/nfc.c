@@ -2,24 +2,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
-// Esta es la función que inicializa el dispositivo
+static nfc_context *global_context = NULL;
+
 nfc_device* nfc_init_device() {
-    nfc_context *context = NULL;
     nfc_device *device = NULL;
     
-    // Este bloque es DE TU MAIN ORIGINAL, línea 30-40
-    nfc_init(&context);
-    if (!context) {
+    nfc_init(&global_context);
+    if (!global_context) {
         printf("Error al inicializar\n");
         return NULL;
     }
     printf("libnfc OK\n");
     
-    device = nfc_open(context, NULL);
+    device = nfc_open(global_context, NULL);
     if (!device) {
         printf("Error al abrir dispositivo\n");
-        nfc_exit(context);
+        nfc_exit(global_context);
         return NULL;
     }
     printf("Dispositivo OK: %s\n", nfc_device_get_name(device));
@@ -27,7 +27,7 @@ nfc_device* nfc_init_device() {
     if (nfc_initiator_init(device) < 0) {
         printf("Error al iniciar lector\n");
         nfc_close(device);
-        nfc_exit(context);
+        nfc_exit(global_context);
         return NULL;
     }
     printf("Lector OK\nAcerca una tarjeta...\n");
@@ -35,8 +35,6 @@ nfc_device* nfc_init_device() {
     return device;
 }
 
-// Esta es la función que lee un UID
-// Lo sacaste del while(running) en tu main original
 char* nfc_read_uid(nfc_device *device) {
     nfc_target target;
     const nfc_modulation mod = {
@@ -44,16 +42,15 @@ char* nfc_read_uid(nfc_device *device) {
         .nbr = NBR_106,
     };
     
-    // Esto es exactamente tu linea: int r = nfc_initiator_select_passive_target(...)
+    printf("Esperando tarjeta...\n");
+    
     int r = nfc_initiator_select_passive_target(device, mod, NULL, 0, &target);
     
     if (r <= 0) {
-        // No se leyó nada, retorna NULL
         return NULL;
     }
     
-    // Aquí va TU código de construcción del UID (líneas 46-49 del original)
-    char *uid = (char*)malloc(32);  // Reserva espacio
+    char *uid = (char*)malloc(32);
     int offset = 0;
     
     for (int i = 0; i < target.nti.nai.szUidLen; i++) {
@@ -63,10 +60,10 @@ char* nfc_read_uid(nfc_device *device) {
     printf("Tarjeta leída!\n");
     printf("UID: %s\n", uid);
     
-    return uid;  // El que me llamó debe hacer free()
+    return uid;
 }
 
 void nfc_cleanup(nfc_context *ctx, nfc_device *dev) {
     if (dev) nfc_close(dev);
-    if (ctx) nfc_exit(ctx);
+    if (global_context) nfc_exit(global_context);
 }
