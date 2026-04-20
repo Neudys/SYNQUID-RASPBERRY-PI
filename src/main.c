@@ -15,7 +15,7 @@ int main() {
         char *uid = nfc_read_uid(device);
         
         if (uid) {
-            printf("Tarjeta %d: %s\n", i + 1, uid);
+            printf("Tarjeta %d: %s\n", uid);
             free(uid);
         }
         
