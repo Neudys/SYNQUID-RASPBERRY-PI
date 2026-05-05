@@ -6,12 +6,12 @@
 #include <openssl/sha.h>
 
 char* generate_uuid_from_uid(const uint8_t *uid, size_t uid_len) {
-    unsigned char hash[SHA_DIGEST_LENGTH];
-    SHA_CTX sha_ctx;
-    
-    SHA1_Init(&sha_ctx);
-    SHA1_Update(&sha_ctx, uid, uid_len);
-    SHA1_Final(hash, &sha_ctx);
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256_CTX sha_ctx;
+
+    SHA256_Init(&sha_ctx);
+    SHA256_Update(&sha_ctx, uid, uid_len);
+    SHA256_Final(hash, &sha_ctx);
     
     // Usar los primeros 16 bytes del hash como UUID
     char *uuid = (char*)malloc(37);  // 36 chars + null
